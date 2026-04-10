@@ -64,17 +64,36 @@ def _with_lock(fn):
             fcntl.flock(lock_f, fcntl.LOCK_UN)
 
 
+def _validate_pattern(pattern: str) -> bool:
+    """Return True if a Bash(...) pattern is syntactically valid (parentheses balanced)."""
+    if not pattern.startswith('Bash(') or not pattern.endswith(')'):
+        return False
+    content = pattern[5:-1]
+    depth = 0
+    for c in content:
+        if c == '(':
+            depth += 1
+        elif c == ')':
+            depth -= 1
+            if depth < 0:
+                return False
+    return depth == 0
+
+
 def add_pattern(executable: str) -> None:
     """Add Bash(executable *) to permissions.allow if not already covered.
     Venv-path executables are automatically expanded to wildcard form.
     """
     norm = normalize_executable(executable)
+    pattern = f"Bash({norm} *)"
+    if not _validate_pattern(pattern):
+        return
 
     def _do():
         settings = load_settings()
         allow = settings.setdefault("permissions", {}).setdefault("allow", [])
-        if not is_covered(norm, allow):
-            allow.append(f"Bash({norm} *)")
+        if not is_covered(norm, allow) and pattern not in allow:
+            allow.append(pattern)
             save_settings(settings)
     _with_lock(_do)
 

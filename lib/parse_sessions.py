@@ -46,6 +46,9 @@ def extract_executable(sub_command: str) -> str | None:
     for token in tokens:
         if re.match(r'^[A-Z_][A-Z0-9_]*=', token):
             continue
+        # Reject tokens with shell/ Python syntax that would produce garbage patterns
+        if any(c in token for c in '();\'"$'):
+            return None
         return token
     return None
 
