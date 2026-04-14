@@ -1,7 +1,9 @@
 ---
 name: allowlist-manager
-description: Manage ~/.claude/settings.json permissions.allow list. Reduces repeated permission prompts by auto-capturing approved commands (via hook) and retroactively adding historical patterns (via init). Subcommands: init, init-dry-run, enable-auto, disable-auto, add-skipped-commands, test.
+description: "Manage ~/.claude/settings.json permissions.allow list. Reduces repeated permission prompts by auto-capturing approved commands (via hook) and retroactively adding historical patterns (via init). Subcommands: init, init-dry-run, enable-auto, disable-auto, add-skipped-commands, test."
 ---
+
+You are the allowlist-manager skill. Parse the first argument...
 
 You are the allowlist-manager skill. Parse the first argument to determine which subcommand to run.
 
