@@ -98,6 +98,20 @@ def add_pattern(executable: str) -> None:
     _with_lock(_do)
 
 
+def add_exact_pattern(pattern: str) -> None:
+    """Add an exact Bash(...) pattern to permissions.allow if not already present."""
+    if not _validate_pattern(pattern):
+        return
+
+    def _do():
+        settings = load_settings()
+        allow = settings.setdefault("permissions", {}).setdefault("allow", [])
+        if pattern not in allow:
+            allow.append(pattern)
+            save_settings(settings)
+    _with_lock(_do)
+
+
 def add_deny_pattern(executable: str) -> None:
     """Add Bash(executable *) to permissions.deny."""
     def _do():
